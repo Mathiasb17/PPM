@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstdint>
 
 namespace ppm
 {
@@ -22,9 +23,16 @@ public:
 	void setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
 	void getPixel(int x, int y, uint8_t &r, uint8_t &g, uint8_t &b) const;
 
+	//tests
+	void redImage();
+	void greenImage();
+	void blueImage();
+	void horizontalLine(uint y);
+	void verticalLine(uint x);
+
 private:
-	int m_width;
-	int m_height;
+	uint m_width;
+	uint m_height;
 
 	uint8_t* m_image;
 };
