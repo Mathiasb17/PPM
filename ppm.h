@@ -8,33 +8,31 @@
 namespace ppm
 {
 
-typedef unsigned int uint;
-
 class PPM
 {
 public:
 	PPM ();
-	PPM (uint width, uint height);
+	PPM (std::uint32_t width, std::uint32_t height);
 	virtual ~PPM();
 
 	void saveP3Format(std::string path);
 	void saveP6Format(std::string path);
 
-	void setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b);
-	void getPixel(int x, int y, uint8_t &r, uint8_t &g, uint8_t &b) const;
+	void setPixel(std::uint32_t x, std::uint32_t y, std::uint8_t r, std::uint8_t g, std::uint8_t b);
+	void getPixel(std::uint32_t x, std::uint32_t y, std::uint8_t &r, std::uint8_t &g, std::uint8_t &b) const;
 
 	//tests
 	void redImage();
 	void greenImage();
 	void blueImage();
-	void horizontalLine(uint y);
-	void verticalLine(uint x);
+	void horizontalLine(std::uint32_t y);
+	void verticalLine(std::uint32_t x);
 
 private:
-	uint m_width;
-	uint m_height;
+	std::uint32_t m_width;
+	std::uint32_t m_height;
 
-	uint8_t* m_image;
+	std::uint8_t* m_image;
 };
 
 } /* ppm */ 

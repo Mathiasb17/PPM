@@ -6,17 +6,17 @@ namespace ppm
 {
 
 PPM::PPM ():
-	m_width(640),
-	m_height(480)
+	m_width(640U),
+	m_height(480U)
 {
-	m_image = new uint8_t[m_width*m_height*3];
+	m_image = new std::uint8_t[m_width*m_height*3];
 }
 
-PPM::PPM (uint width, uint height):
+PPM::PPM (std::uint32_t width, std::uint32_t height):
 	m_width(width),
 	m_height(height)
 {
-	m_image = new uint8_t[m_width*m_height*3];
+	m_image = new std::uint8_t[m_width*m_height*3];
 }
 
 PPM::~PPM()
@@ -33,9 +33,9 @@ void PPM::saveP3Format(std::string path)
 	f << m_width<< " " << m_height << std::endl;
 	f << "255" << std::endl;
 
-	for (uint i = 0; i < m_width * m_height * 3; ++i)
+	for (std::uint32_t i = 0; i < m_width * m_height * 3; ++i)
 	{
-		f << (int)m_image[i] << " ";
+		f << (std::int32_t)m_image[i] << " ";
 	}
 
 	f.close();
@@ -45,13 +45,13 @@ void PPM::saveP3Format(std::string path)
 void PPM::saveP6Format(std::string path)
 {
 	std::fstream f;
-	f.open(path.c_str(), std::ios_base::out);
+	f.open(path.c_str(), std::ios_base::out | std::ios_base::binary);
 
 	f << "P6" << std::endl;
 	f << m_width<< " " << m_height << std::endl;
 	f << "255" << std::endl;
 
-	for (uint i = 0; i < m_width * m_height * 3; ++i)
+	for (std::uint32_t i = 0; i < m_width * m_height * 3; ++i)
 	{
 		f.write((char*)&m_image[i], sizeof(uint8_t));
 	}
@@ -59,14 +59,14 @@ void PPM::saveP6Format(std::string path)
 	f.close();
 }
 
-void PPM::setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b)
+void PPM::setPixel(std::uint32_t x, std::uint32_t y, std::uint8_t r, std::uint8_t g, std::uint8_t b)
 {
 	m_image[m_width*y*3 + x*3] = r;
 	m_image[m_width*y*3 + x*3+1] = g;
 	m_image[m_width*y*3 + x*3+2] = b;
 }
 
-void PPM::getPixel(int x, int y, uint8_t &r, uint8_t &g, uint8_t &b) const
+void PPM::getPixel(std::uint32_t x, std::uint32_t y, std::uint8_t &r, std::uint8_t &g, std::uint8_t &b) const
 {
 	r = m_image[m_width*y*3 + x*3];
 	g = m_image[m_width*y*3 + x*3+1];
@@ -75,7 +75,7 @@ void PPM::getPixel(int x, int y, uint8_t &r, uint8_t &g, uint8_t &b) const
 
 void PPM::redImage()
 {
-	for (uint i = 0; i < m_width*m_height*3; ++i)
+	for (std::uint32_t i = 0; i < m_width*m_height*3; ++i)
 	{
 		if (i%3 == 0) 
 			m_image[i] = 255;
@@ -86,7 +86,7 @@ void PPM::redImage()
 
 void PPM::greenImage()
 {
-	for (uint i = 0; i < m_width*m_height*3; ++i)
+	for (std::uint32_t i = 0; i < m_width*m_height*3; ++i)
 	{
 		if (i%3 == 1) 
 			m_image[i] = 255;
@@ -97,7 +97,7 @@ void PPM::greenImage()
 
 void PPM::blueImage()
 {
-	for (uint i = 0; i < m_width*m_height*3; ++i)
+	for (std::uint32_t i = 0; i < m_width*m_height*3; ++i)
 	{
 		if (i%3 == 2) 
 			m_image[i] = 255;
@@ -106,28 +106,20 @@ void PPM::blueImage()
 	}	
 }
 
-void PPM::horizontalLine(uint y)
+void PPM::horizontalLine(std::uint32_t y)
 {
-	for (uint i = 0; i < m_width; ++i)
+	for (std::uint32_t i = 0; i < m_width; ++i)
 	{
-		for (uint j = 0; j < m_height; ++j)
-		{
-			if (j == y)
-				setPixel(i, j, 255, 255, 255);
-		}
+		setPixel(i, y, 255, 255, 255);
 	}
 }
 
-void PPM::verticalLine(uint x)
+void PPM::verticalLine(std::uint32_t x)
 {
-	for (uint i = 0; i < m_width; ++i)
+	for (std::uint32_t i = 0; i < m_height; ++i)
 	{
-		for (uint j = 0; j < m_height; ++j)
-		{
-			if (i == x)
-				setPixel(i, j, 255, 255, 255);
-		}
+		setPixel(x, i, 255, 255, 255);
 	}
 }
-	
+
 } /* ppm */ 
