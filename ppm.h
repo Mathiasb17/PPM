@@ -1,40 +1,32 @@
-#ifndef PPM_H
-#define PPM_H
+#pragma once
 
-#include <iostream>
-#include <string>
-#include <cstdint>
+#include "image.h"
 
-namespace ppm
+BEGIN_NAMESPACE_TINYPIC
+
+#define TINYPIC_PPMTYPE "PpmType"
+
+enum enumPpmType
 {
+	P3 = 0,
+	P6
+};
 
-class PPM
+class PPM : public Image
 {
 public:
 	PPM ();
 	PPM (std::uint32_t width, std::uint32_t height);
-	virtual ~PPM();
+	virtual ~PPM ();
 
-	void saveP3Format(std::string path);
-	void saveP6Format(std::string path);
+	void setPixel(std::uint32_t x, std::uint32_t y, std::uint8_t r, std::uint8_t g, std::uint8_t b) final;
+	void getPixel(std::uint32_t x, std::uint32_t y, std::uint8_t &r, std::uint8_t &g, std::uint8_t &b) const final;
 
-	void setPixel(std::uint32_t x, std::uint32_t y, std::uint8_t r, std::uint8_t g, std::uint8_t b);
-	void getPixel(std::uint32_t x, std::uint32_t y, std::uint8_t &r, std::uint8_t &g, std::uint8_t &b) const;
-
-	//tests
-	void redImage();
-	void greenImage();
-	void blueImage();
-	void horizontalLine(std::uint32_t y);
-	void verticalLine(std::uint32_t x);
+	void save(const std::string filename, const imageFileProperties fileProps) const final;
 
 private:
-	std::uint32_t m_width;
-	std::uint32_t m_height;
-
-	std::uint8_t* m_image;
+	void saveP3Format(std::string filename) const;
+	void saveP6Format(std::string filename) const;
 };
 
-} /* ppm */ 
-
-#endif /* ifndef PPM_H */
+END_NAMESPACE_TINYPIC
