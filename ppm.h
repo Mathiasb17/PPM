@@ -1,8 +1,8 @@
 #pragma once
 
-#include "image.h"
+#include "rgbimage.h"
 
-BEGIN_NAMESPACE_TINYPIC
+NAMESPACE_TINYPIC_BEGIN
 
 #define TINYPIC_PPMTYPE "PpmType"
 
@@ -12,21 +12,34 @@ enum enumPpmType
 	P6
 };
 
-class PPM : public Image
+enum PBMPixel
+{
+	BLACK = 0,
+	WHITE = 1
+};
+
+//forward declaration of specific Image base classes
+template class Image<RGBPixel>;
+template class Image<PBMPixel>;
+
+class PPM : public RGBImage
 {
 public:
 	PPM ();
 	PPM (std::uint32_t width, std::uint32_t height);
 	virtual ~PPM ();
 
-	void setPixel(std::uint32_t x, std::uint32_t y, std::uint8_t r, std::uint8_t g, std::uint8_t b) final;
-	void getPixel(std::uint32_t x, std::uint32_t y, std::uint8_t &r, std::uint8_t &g, std::uint8_t &b) const final;
+	void setPixel(std::uint32_t x, std::uint32_t y, const RGBPixel & rgb) final;
+	void getPixel(std::uint32_t x, std::uint32_t y, RGBPixel & rgb) const final;
 
-	void save(const std::string filename, const imageFileProperties fileProps) const final;
+	void save(const std::string & filename, const imageFileProperties & fileProps) const final;
 
 private:
-	void saveP3Format(std::string filename) const;
-	void saveP6Format(std::string filename) const;
+	void saveP3Format(const std::string & filename) const;
+	void saveP6Format(const std::string & filename) const;
+
+private:
+	std::uint8_t* m_image;
 };
 
-END_NAMESPACE_TINYPIC
+NAMESPACE_TINYPIC_END
