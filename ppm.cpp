@@ -5,54 +5,65 @@
 
 NAMESPACE_TINYPIC_BEGIN
 
-PPM::PPM ():
-	RGBImage ()
+template <class T, class U>	
+PPM<T, U>::PPM ():
+	Image<T, U> ()
 {
-	m_image = new std::uint8_t[m_width*m_height*3];
+	m_image = new U[this->m_width * this->m_height * sizeof(T)/sizeof(U)];
 }
 
-PPM::PPM (std::uint32_t width, std::uint32_t height):
-	RGBImage (width, height)
+template<class T, class U>	
+PPM<T, U>::PPM (std::uint32_t width, std::uint32_t height):
+	Image<T, U> (width, height)
 {
-	m_image = new std::uint8_t[m_width*m_height*3];
+	m_image = new U[this->m_width * this->m_height * sizeof(T)/sizeof(U)];
 }
 
-PPM::~PPM()
+template<class T, class U>	
+PPM<T, U>::~PPM()
 {
 	delete [] m_image;
 }
 
-void PPM::setPixel(std::uint32_t x, std::uint32_t y, const RGBPixel & rgb)
+template<class T, class U>	
+void PPM<T, U>::setPixel(std::uint32_t x, std::uint32_t y, const T & pixel)
 {
-	m_image[m_width*y*3 + x*3] = std::get<0>(rgb);
-	m_image[m_width*y*3 + x*3+1] = std::get<1>(rgb);
-	m_image[m_width*y*3 + x*3+2] = std::get<2>(rgb);
-}
-
-void PPM::getPixel(std::uint32_t x, std::uint32_t y, RGBPixel & rgb) const
-{
-	std::get<0>(rgb) = m_image[m_width*y*3 + x*3];
-	std::get<1>(rgb) = m_image[m_width*y*3 + x*3+1];
-	std::get<2>(rgb) = m_image[m_width*y*3 + x*3+2];
-}
-
-void PPM::save(const std::string & filename, const imageFileProperties & fileProps) const
-{
-	switch (fileProps.at(TINYPIC_PPMTYPE))
+	std::uint16_t nbPixelComponents = std::tuple_size<T>::value;
+	for(std::uint16_t i = 0; i < nbPixelComponents; ++i)
 	{
-		case P3:
-			this->saveP3Format(filename);
-			break;
-		case P6:
-			this->saveP6Format(filename);
-			break;
-		default:
-			std::cerr << __func__ << " warning : entering default case." << std::endl;
-			this->saveP3Format(filename);
+		m_image[this->m_width*y*nbPixelComponents + x*nbPixelComponents+i] = pixel[i];
 	}
 }
 
-void PPM::saveP3Format(const std::string & filename) const
+template<class T, class U>	
+void PPM<T, U>::getPixel(std::uint32_t x, std::uint32_t y, T & pixel) const
+{
+	std::uint16_t nbPixelComponents = std::tuple_size<T>::value;
+	for(std::uint16_t i = 0; i < nbPixelComponents; ++i)
+	{
+		pixel[i] = m_image[this->m_width*y*nbPixelComponents + x*nbPixelComponents+i];
+	}
+}
+
+template<class T, class U>	
+void PPM<T, U>::save(const std::string & filename, const imageFileProperties & fileProps) const
+{
+	switch (fileProps.at(TINYPIC_PPMTYPE))
+	{
+		case ASCII:
+			this->saveAscii(filename);
+			break;
+		case BINARY:
+			this->saveBinary(filename);
+			break;
+		default:
+			std::cerr << __func__ << " warning : entering default case." << std::endl;
+			this->saveAscii(filename);
+	}
+}
+
+template<class T, class U>	
+void PPM<T, U>::saveAscii(const std::string & filename) const
 {
 	try
 	{
@@ -60,10 +71,10 @@ void PPM::saveP3Format(const std::string & filename) const
 		f.open(filename.c_str(), std::ios_base::out);
 
 		f << "P3" << std::endl;
-		f << m_width << " " << m_height << std::endl;
+		f << this->m_width << " " << this->m_height << std::endl;
 		f << "255" << std::endl;
 
-		for (std::uint32_t i = 0; i < m_width * m_height * 3; ++i)
+		for (std::uint32_t i = 0; i < this->m_width * this->m_height * 3; ++i)
 		{
 			f << static_cast<std::int32_t>(m_image[i]) << " ";
 		}
@@ -76,7 +87,8 @@ void PPM::saveP3Format(const std::string & filename) const
 	}
 }
 
-void PPM::saveP6Format(const std::string & filename) const
+template<class T, class U>	
+void PPM<T, U>::saveBinary(const std::string & filename) const
 {
 	try
 	{
@@ -84,10 +96,10 @@ void PPM::saveP6Format(const std::string & filename) const
 		f.open(filename.c_str(), std::ios_base::out | std::ios_base::binary);
 
 		f << "P6" << std::endl;
-		f << m_width << " " << m_height << std::endl;
+		f << this->m_width << " " << this->m_height << std::endl;
 		f << "255" << std::endl;
 
-		for (std::uint32_t i = 0; i < m_width * m_height * 3; ++i)
+		for (std::uint32_t i = 0; i < this->m_width * this->m_height * 3; ++i)
 		{
 			f.write(reinterpret_cast<char*>(&m_image[i]), sizeof(std::uint8_t));
 		}

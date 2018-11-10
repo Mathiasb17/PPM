@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rgbimage.h"
+#include "image.h"
 
 NAMESPACE_TINYPIC_BEGIN
 
@@ -8,38 +8,34 @@ NAMESPACE_TINYPIC_BEGIN
 
 enum enumPpmType
 {
-	P3 = 0,
-	P6
+	ASCII = 0,
+	BINARY
 };
 
-enum PBMPixel
-{
-	BLACK = 0,
-	WHITE = 1
-};
-
-//forward declaration of specific Image base classes
-template class Image<RGBPixel>;
-template class Image<PBMPixel>;
-
-class PPM : public RGBImage
+template <class T, class U>	
+class PPM : public Image<T, U>
 {
 public:
 	PPM ();
 	PPM (std::uint32_t width, std::uint32_t height);
 	virtual ~PPM ();
 
-	void setPixel(std::uint32_t x, std::uint32_t y, const RGBPixel & rgb) final;
-	void getPixel(std::uint32_t x, std::uint32_t y, RGBPixel & rgb) const final;
+	void setPixel(std::uint32_t x, std::uint32_t y, const T & pixel) final;
+	void getPixel(std::uint32_t x, std::uint32_t y, T & pixel) const final;
 
 	void save(const std::string & filename, const imageFileProperties & fileProps) const final;
 
 private:
-	void saveP3Format(const std::string & filename) const;
-	void saveP6Format(const std::string & filename) const;
+	void saveAscii(const std::string & filename) const;
+	void saveBinary(const std::string & filename) const;
 
 private:
-	std::uint8_t* m_image;
+	U* m_image;
 };
+
+//forward declaration of specific Image base classes
+template class PPM<RGBPixel, std::uint8_t>;
+template class PPM<GrayScalePixel, std::uint16_t>;
+template class PPM<BinaryPixel, BlackOrWhite>;
 
 NAMESPACE_TINYPIC_END

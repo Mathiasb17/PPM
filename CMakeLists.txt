@@ -21,7 +21,7 @@ project(libtinypic)
 ####################################################################################################
 ####################################################################################################
 ####################################################################################################
-add_library(libtinypic image.cpp rgbimage.cpp ppm.cpp)
+add_library(libtinypic image.cpp rgbimage.cpp grayscaleimage.cpp ppm.cpp)
 
 add_executable(tinypic_example main.cpp)
 target_link_libraries(tinypic_example libtinypic)
