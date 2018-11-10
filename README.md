@@ -1,25 +1,9 @@
 # TinyPic
-To edit a ppm (P3 and P6) image, simply yet efficiently.
 
-Can be tested with (for example) :
+TinyPic is a small and efficient C++ image manipulation library.
 
-```c++
-#include <iostream>
-#include "ppm.h"
+# License
 
-int main(int argc, char *argv[])
-{
-	std::cout << "begin test" << std::endl;
+see LICENSE.txt
 
-	ppm::PPM p;
-	p.blueImage();
-	p.horizontalLine(100);
-	p.verticalLine(50);
-	p.saveP6Format("toto.ppm");
 
-	std::cout << "end test" << std::endl;
-
-	return 0;
-}
-```
-Do whatever you want with it.
