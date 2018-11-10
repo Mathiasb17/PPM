@@ -1,4 +1,4 @@
-# PPM
+# TinyPic
 To edit a ppm (P3 and P6) image, simply yet efficiently.
 
 Can be tested with (for example) :
