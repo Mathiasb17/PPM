@@ -24,8 +24,13 @@ project(libtinypic)
 include_directories(./include/)
 add_library(tinypic src/image.cpp src/ppm.cpp)
 
-#add_executable(tinypic_example src/main.cpp)
-#target_link_libraries(tinypic_example libtinypic)
+add_executable(tinypic_example src/main.cpp)
+target_link_libraries(tinypic_example tinypic)
 
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+# INSTALL TARGETS
 install(TARGETS tinypic DESTINATION /usr/lib/)
 install(DIRECTORY ./include/tinypic DESTINATION /usr/include)
