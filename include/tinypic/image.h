@@ -12,8 +12,8 @@
 NAMESPACE_TINYPIC_BEGIN
 
 typedef std::map<std::uint32_t, std::uint8_t> imageFileProperties;
-typedef std::array<std::uint8_t, 3> RGBPixel;
-typedef std::array<std::int16_t, 1> GrayScalePixel;
+typedef std::array<std::uint16_t, 3> RGBPixel;
+typedef std::array<std::uint16_t, 1> GrayScalePixel;
 
 typedef std::array<bool, 1> BinaryPixel;
 

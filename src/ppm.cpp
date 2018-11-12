@@ -104,7 +104,7 @@ void PPM<T>::saveAscii(const std::string & filename, const imageFileProperties &
 
 		for (std::uint32_t i = 0; i < this->m_width * this->m_height; ++i)
 		{
-			for (std::uint32_t j = 0; j < sizeof(T); ++j)
+			for (std::uint32_t j = 0; j < sizeof(T)/sizeof(m_image[0][0]); ++j)
 			{
 				f << static_cast<std::int32_t>(m_image[i][j]) << " ";
 			}
@@ -156,11 +156,11 @@ const std::string PPM<T>::getMagicNumber(const imageFileProperties & fileProps) 
 	}
 	else if(std::is_same<T, GrayScalePixel>())
 	{
-		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P4" : "P1";
+		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P5" : "P2";
 	}
 	else //binary pixel
 	{
-		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P5" : "P2";
+		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P4" : "P1";
 	}
 
 	return res;
