@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <limits>
 
 NAMESPACE_TINYPIC_BEGIN
 
@@ -167,7 +168,7 @@ const std::string PPM<T>::getMagicNumber(const imageFileProperties & fileProps) 
 }
 
 template<class T>
-const std::string PPM<T>::getMaxChroma(const imageFileProperties & fileProps) const
+const std::string PPM<T>::getMaxChroma(imageFileProperties & fileProps) const
 {
 	if(std::is_same<T, BinaryPixel>()) // no max chroma in black and white images
 	{
@@ -179,6 +180,19 @@ const std::string PPM<T>::getMaxChroma(const imageFileProperties & fileProps) co
 	}
 	else
 	{
+		if(fileProps.at(TINYPIC_PPM_MAXCHROMA) < 0)
+		{
+			std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be inferior to 0, using default value " << MACRONAME(TINYPIC_PPM_MAXCHROMA_DEFAULT) << std::endl;
+			fileProps[TINYPIC_PPM_MAXCHROMA] = TINYPIC_PPM_MAXCHROMA;
+		}
+
+		std::uint16_t max = std::numeric_limits<std::uint16_t>::max();
+		if(fileProps.at(TINYPIC_PPM_MAXCHROMA) > max)
+		{
+			std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be greater than " << max << ". value will be clamped to" << max << std::endl;
+			fileProps[TINYPIC_PPM_MAXCHROMA] = max;
+		}
+
 		return std::to_string(fileProps.at(TINYPIC_PPM_MAXCHROMA));
 	}
 }

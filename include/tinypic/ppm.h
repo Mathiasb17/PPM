@@ -9,6 +9,8 @@
 #define TINYPIC_PPM_TYPE_ASCII 1
 
 #define TINYPIC_PPM_TYPE_DEFAULT ASCII
+
+#define TINYPIC_PPM_MAXCHROMA_DEFAULT 255
 #define TINYPIC_PPM_MAXCHROMA_GRAYSCALE_DEFAULT 255
 #define TINYPIC_PPM_MAXCHROMA_RGB_DEFAULT 255
 
@@ -36,7 +38,7 @@ private:
 	void saveBinary(const std::string & filename, const imageFileProperties & fileProps) const;
 
 	const std::string getMagicNumber(const imageFileProperties & fileProps) const;
-	const std::string getMaxChroma(const imageFileProperties & fileProps) const;
+	const std::string getMaxChroma(imageFileProperties & fileProps) const;
 
 private:
 	T* m_image;
