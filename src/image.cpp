@@ -36,22 +36,4 @@ std::uint32_t Image<T>::getHeight() const
 	return m_height;
 }
 
-template <class T>
-void Image<T>::horizontalLine(std::uint32_t y, const T & pixel)
-{
-	for (std::uint32_t i = 0; i < m_width; ++i)
-	{
-		setPixel(i, y, pixel);
-	}
-}
-
-template <class T>
-void Image<T>::verticalLine(std::uint32_t x, const T & pixel)
-{
-	for (std::uint32_t i = 0; i < m_height; ++i)
-	{
-		setPixel(x, i, pixel);
-	}
-}
-
 NAMESPACE_TINYPIC_END
