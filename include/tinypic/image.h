@@ -33,9 +33,6 @@ public:
 
 	virtual void save(const std::string & filename, imageFileProperties & fileProps) const = 0;
 
-	void horizontalLine(std::uint32_t y, const T & pixel);
-	void verticalLine(std::uint32_t x, const T & pixel);
-
 protected:
 	virtual void writeHeader(std::fstream & file, const imageFileProperties & fileProps) const = 0;
 	virtual void checkImageFileProperties(imageFileProperties & fileProps) const = 0;
