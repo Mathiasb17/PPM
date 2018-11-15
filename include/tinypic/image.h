@@ -31,7 +31,7 @@ public:
 	virtual void setPixel(const std::uint32_t x, const std::uint32_t y, const T & pixel) = 0;
 	virtual void getPixel(const std::uint32_t x, const std::uint32_t y, T & pixel) const = 0;
 
-	virtual void save(const std::string & filename, imageFileProperties & fileProps) const = 0;
+	virtual void save(const std::string & filename, const imageFileProperties & fileProps) const = 0;
 
 protected:
 	virtual void writeHeader(std::fstream & file, const imageFileProperties & fileProps) const = 0;

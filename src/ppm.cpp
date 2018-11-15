@@ -40,9 +40,9 @@ void PPM<T>::getPixel(const std::uint32_t x, const std::uint32_t y, T & pixel) c
 }
 
 template<class T>	
-void PPM<T>::save(const std::string & filename, imageFileProperties & fileProps) const
+void PPM<T>::save(const std::string & filename, const imageFileProperties & fileProps) const
 {
-	checkImageFileProperties(fileProps);
+	checkImageFileProperties(const_cast<imageFileProperties &>(fileProps));
 
 	switch (fileProps.at(TINYPIC_PPM_TYPE))
 	{
@@ -61,35 +61,34 @@ void PPM<T>::save(const std::string & filename, imageFileProperties & fileProps)
 template<class T>	
 void PPM<T>::writeHeader(std::fstream & file, const imageFileProperties & fileProps) const
 {
-	file << this->getMagicNumber(fileProps) << std::endl;
+	file << this->getMagicNumber(const_cast<imageFileProperties &>(fileProps)) << std::endl;
 	file << this->m_width << " " << this->m_height << std::endl;
-	file << this->getMaxChroma(fileProps) << std::endl;
+	file << this->getMaxChroma(const_cast<imageFileProperties &>(fileProps)) << std::endl;
 }
 
 template<class T>	
 void PPM<T>::checkImageFileProperties(imageFileProperties & fileProps) const
 {
+	//check ppm type
 	if(fileProps.find(TINYPIC_PPM_TYPE) == fileProps.end()) //TYPE not found, setting default
 	{
-		std::cout << __func__ << " warning : TINYPIC_PPM_TYPE has not been defined in file properties, setting to default" << MACRONAME(TINYPIC_PPM_TYPE_ASCII) << std::endl;
-		fileProps.insert(std::make_pair(TINYPIC_PPM_TYPE, TINYPIC_PPM_TYPE_ASCII));
+		std::cout << __func__ << " warning : TINYPIC_PPM_TYPE has not been defined in file properties, setting to default " << MACRONAME(TINYPIC_PPM_TYPE_ASCII) << std::endl;
+		fileProps[TINYPIC_PPM_TYPE] = TINYPIC_PPM_TYPE_ASCII;
 	}
-	if(fileProps.find(TINYPIC_PPM_MAXCHROMA) == fileProps.end())
+	else
 	{
-		if(std::is_same<T, RGBPixel>())
-		{
-			std::cout << __func__ << " warning : TINYPIC_PPM_MAXCHROMA has not been defined in file properties, setting to default" << MACRONAME(TINYPIC_PPM_MAXCHROMA_RGB_DEFAULT) << std::endl;
-			fileProps.insert(std::make_pair(TINYPIC_PPM_MAXCHROMA, TINYPIC_PPM_MAXCHROMA_RGB_DEFAULT));
-		}
-		else if(std::is_same<T, GrayScalePixel>())
-		{
-			std::cout << __func__ << " warning : TINYPIC_PPM_MAXCHROMA has not been defined in file properties, setting to default" << MACRONAME(TINYPIC_PPM_MAXCHROMA_GRAYSCALE_DEFAULT) << std::endl;
-			fileProps.insert(std::make_pair(TINYPIC_PPM_MAXCHROMA, TINYPIC_PPM_MAXCHROMA_GRAYSCALE_DEFAULT));
-		}
-		else //binary pixel
-		{
-			//do nothing !
-		}
+		//TODO check the content of TINY_PPM_TYPE
+	}
+
+	//check ppm max chroma
+	if(fileProps.find(TINYPIC_PPM_MAXCHROMA) != fileProps.end())
+	{
+		getMaxChroma(fileProps);
+	}
+	else // max chroma not defined
+	{
+		std::cout << __func__ << " warning : TINYPIC_PPM_MAXCHROMA has not been defined in file properties, setting to default " << MACRONAME(TINYPIC_PPM_TYPE_DEFAULT) << std::endl;
+		fileProps[TINYPIC_PPM_MAXCHROMA] = TINYPIC_PPM_MAXCHROMA_DEFAULT;
 	}
 }
 
@@ -147,54 +146,56 @@ void PPM<T>::saveBinary(const std::string & filename, const imageFileProperties 
 }
 
 template<class T>
-const std::string PPM<T>::getMagicNumber(const imageFileProperties & fileProps) const
+const std::string PPM<T>::getMagicNumber(imageFileProperties & fileProps) const
 {
-	std::string res;
+	UNUSED(fileProps);
+}
 
-	if(std::is_same<T, RGBPixel>())
-	{
-		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P6" : "P3";
-	}
-	else if(std::is_same<T, GrayScalePixel>())
-	{
-		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P5" : "P2";
-	}
-	else //binary pixel
-	{
-		res = fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P4" : "P1";
-	}
+template<>
+const std::string PPM<RGBPixel>::getMagicNumber(imageFileProperties & fileProps) const
+{
+	return fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P6" : "P3";
+}
 
-	return res;
+template<>
+const std::string PPM<GrayScalePixel>::getMagicNumber(imageFileProperties & fileProps) const
+{
+	return fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P5" : "P2";
+}
+
+template<>
+const std::string PPM<BinaryPixel>::getMagicNumber(imageFileProperties & fileProps) const
+{
+	return fileProps.at(TINYPIC_PPM_TYPE) == TINYPIC_PPM_TYPE_BINARY ? "P4" : "P1";
 }
 
 template<class T>
 const std::string PPM<T>::getMaxChroma(imageFileProperties & fileProps) const
 {
-	if(std::is_same<T, BinaryPixel>()) // no max chroma in black and white images
+	if(fileProps.at(TINYPIC_PPM_MAXCHROMA) < 0)
 	{
-		if(fileProps.find(TINYPIC_PPM_MAXCHROMA) != fileProps.end())
-		{
-			std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA property will be ignored in PBM (black and white) mode." << std::endl;
-		}
-		return "";
+		std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be inferior to 0, using default value " << MACRONAME(TINYPIC_PPM_MAXCHROMA_DEFAULT) << std::endl;
+		fileProps[TINYPIC_PPM_MAXCHROMA] = TINYPIC_PPM_MAXCHROMA;
 	}
-	else
+
+	std::uint16_t max = std::numeric_limits<std::uint16_t>::max();
+	if(fileProps.at(TINYPIC_PPM_MAXCHROMA) > max)
 	{
-		if(fileProps.at(TINYPIC_PPM_MAXCHROMA) < 0)
-		{
-			std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be inferior to 0, using default value " << MACRONAME(TINYPIC_PPM_MAXCHROMA_DEFAULT) << std::endl;
-			fileProps[TINYPIC_PPM_MAXCHROMA] = TINYPIC_PPM_MAXCHROMA;
-		}
-
-		std::uint16_t max = std::numeric_limits<std::uint16_t>::max();
-		if(fileProps.at(TINYPIC_PPM_MAXCHROMA) > max)
-		{
-			std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be greater than " << max << ". value will be clamped to" << max << std::endl;
-			fileProps[TINYPIC_PPM_MAXCHROMA] = max;
-		}
-
-		return std::to_string(fileProps.at(TINYPIC_PPM_MAXCHROMA));
+		std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be greater than " << max << ". value will be clamped to" << max << std::endl;
+		fileProps[TINYPIC_PPM_MAXCHROMA] = max;
 	}
+
+	return std::to_string(fileProps.at(TINYPIC_PPM_MAXCHROMA));
+}
+
+template<>
+const std::string PPM<BinaryPixel>::getMaxChroma(imageFileProperties & fileProps) const
+{
+	if(fileProps.find(TINYPIC_PPM_MAXCHROMA) != fileProps.end())
+	{
+		std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA property will be ignored in PBM (black and white) mode." << std::endl;
+	}
+	return "";
 }
 
 NAMESPACE_TINYPIC_END

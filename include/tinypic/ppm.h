@@ -27,7 +27,7 @@ public:
 	void setPixel(const std::uint32_t x, const std::uint32_t y, const T & pixel) final;
 	void getPixel(const std::uint32_t x, const std::uint32_t y, T & pixel) const final;
 
-	void save(const std::string & filename, imageFileProperties & fileProps) const final;
+	void save(const std::string & filename, const imageFileProperties & fileProps) const final;
 
 protected:
 	virtual void writeHeader(std::fstream & file, const imageFileProperties & fileProps) const final;
@@ -37,8 +37,10 @@ private:
 	void saveAscii(const std::string & filename, const imageFileProperties & fileProps) const;
 	void saveBinary(const std::string & filename, const imageFileProperties & fileProps) const;
 
-	const std::string getMagicNumber(const imageFileProperties & fileProps) const;
+	const std::string getMagicNumber(imageFileProperties & fileProps) const;
 	const std::string getMaxChroma(imageFileProperties & fileProps) const;
+
+	void setDefaultMaxChroma(imageFileProperties & fileProps);
 
 private:
 	T* m_image;
