@@ -2,6 +2,12 @@
 
 #include "image.h"
 
+#define NAMESPACE_TINYPIC_PPM_BEGIN namespace ppm{
+#define NAMESPACE_TINYPIC_PPM_END }
+
+NAMESPACE_TINYPIC_BEGIN
+NAMESPACE_TINYPIC_PPM_BEGIN
+
 #define TINYPIC_PPM_TYPE 0
 #define TINYPIC_PPM_MAXCHROMA 1
 
@@ -13,8 +19,6 @@
 #define TINYPIC_PPM_MAXCHROMA_DEFAULT 255
 #define TINYPIC_PPM_MAXCHROMA_GRAYSCALE_DEFAULT 255
 #define TINYPIC_PPM_MAXCHROMA_RGB_DEFAULT 255
-
-NAMESPACE_TINYPIC_BEGIN
 
 template <class T>	
 class PPM : public Image<T>
@@ -39,6 +43,7 @@ private:
 
 	const std::string getMagicNumber(imageFileProperties & fileProps) const;
 	const std::string getMaxChroma(imageFileProperties & fileProps) const;
+	const std::string getPpmType(imageFileProperties & fileProps) const;
 
 	void setDefaultMaxChroma(imageFileProperties & fileProps);
 
@@ -51,4 +56,5 @@ template class PPM<RGBPixel>;
 template class PPM<GrayScalePixel>;
 template class PPM<BinaryPixel>;
 
+NAMESPACE_TINYPIC_PPM_END
 NAMESPACE_TINYPIC_END

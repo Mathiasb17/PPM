@@ -11,8 +11,9 @@ int main(int argc, char *argv[])
 	std::cout << "begin test" << std::endl;
 
 	tinypic::imageFileProperties fileProps;
+	fileProps[TINYPIC_PPM_TYPE] = 72U;
 
-	tinypic::PPM<tinypic::GrayScalePixel> p;
+	tinypic::ppm::PPM<tinypic::GrayScalePixel> p;
 
 	for(std::uint32_t i = 0; i < p.getWidth(); ++i)
 	{

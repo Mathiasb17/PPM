@@ -6,6 +6,7 @@
 #include <limits>
 
 NAMESPACE_TINYPIC_BEGIN
+NAMESPACE_TINYPIC_PPM_BEGIN
 
 template <class T>	
 PPM<T>::PPM ():
@@ -69,16 +70,8 @@ void PPM<T>::writeHeader(std::fstream & file, const imageFileProperties & filePr
 template<class T>	
 void PPM<T>::checkImageFileProperties(imageFileProperties & fileProps) const
 {
-	//check ppm type
-	if(fileProps.find(TINYPIC_PPM_TYPE) == fileProps.end()) //TYPE not found, setting default
-	{
-		std::cout << __func__ << " warning : TINYPIC_PPM_TYPE has not been defined in file properties, setting to default " << MACRONAME(TINYPIC_PPM_TYPE_ASCII) << std::endl;
-		fileProps[TINYPIC_PPM_TYPE] = TINYPIC_PPM_TYPE_ASCII;
-	}
-	else
-	{
-		//TODO check the content of TINY_PPM_TYPE
-	}
+
+	getPpmType(fileProps);
 
 	//check ppm max chroma
 	if(fileProps.find(TINYPIC_PPM_MAXCHROMA) != fileProps.end())
@@ -181,7 +174,7 @@ const std::string PPM<T>::getMaxChroma(imageFileProperties & fileProps) const
 	std::uint16_t max = std::numeric_limits<std::uint16_t>::max();
 	if(fileProps.at(TINYPIC_PPM_MAXCHROMA) > max)
 	{
-		std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be greater than " << max << ". value will be clamped to" << max << std::endl;
+		std::cout << __func__ << " : TINYPIC_PPM_MAXCHROMA cannot be greater than " << max << ". value will be clamped to " << max << std::endl;
 		fileProps[TINYPIC_PPM_MAXCHROMA] = max;
 	}
 
@@ -198,4 +191,23 @@ const std::string PPM<BinaryPixel>::getMaxChroma(imageFileProperties & fileProps
 	return "";
 }
 
+template<typename T>
+const std::string PPM<T>::getPpmType(imageFileProperties & fileProps) const
+{
+	if(fileProps.find(TINYPIC_PPM_TYPE) != fileProps.end()) 
+	{
+		if(fileProps[TINYPIC_PPM_TYPE] != TINYPIC_PPM_TYPE_ASCII && fileProps[TINYPIC_PPM_TYPE] != TINYPIC_PPM_TYPE_BINARY)
+		{
+			std::cout << __func__ << " warning : TINYPIC_PPM_TYPE bad definition, setting to default " << MACRONAME(TINYPIC_PPM_TYPE_ASCII) << std::endl;
+			fileProps[TINYPIC_PPM_TYPE] = TINYPIC_PPM_TYPE_ASCII;
+		}
+	}
+	else
+	{
+		std::cout << __func__ << " warning : TINYPIC_PPM_TYPE has not been defined in file properties, setting to default " << MACRONAME(TINYPIC_PPM_TYPE_ASCII) << std::endl;
+		fileProps[TINYPIC_PPM_TYPE] = TINYPIC_PPM_TYPE_ASCII;
+	}
+}
+
+NAMESPACE_TINYPIC_PPM_END
 NAMESPACE_TINYPIC_END
