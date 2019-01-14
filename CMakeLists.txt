@@ -23,7 +23,7 @@ project(libtinypic)
 ####################################################################################################
 ####################################################################################################
 include_directories(./include/)
-add_library(tinypic src/image.cpp src/ppm.cpp)
+add_library(tinypic src/image.cpp src/ppm.cpp src/bmp.cpp)
 
 add_executable(tinypic_example src/main.cpp)
 target_link_libraries(tinypic_example tinypic)
