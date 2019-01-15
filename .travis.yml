@@ -5,18 +5,19 @@ compiler:
   - clang
 
 matrix:
-    include:
-        - os: linux
-          addons:
-              apt:
-                  sources:
-                      - ubuntu-toolchain-r-test
-                  packages:
-                      - g++-7
-                  env:
-                      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+          env:
+            - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
 before_script:
+  - eval "${MATRIX_EVAL}"
   - mkdir build
   - cd build
   - cmake ..
